@@ -25,10 +25,11 @@ const showImages = (images) => {
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
     gallery.appendChild(div)
   })
-
+  toggleSpinner();
 }
 
 const getImages = (query) => {
+  toggleSpinner();
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data => showImages(data.hits))
@@ -38,11 +39,9 @@ const getImages = (query) => {
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  
-  
   let item = sliders.indexOf(img);
   if (item === -1) {
-    element.classList.add('added');
+      element.classList.add('added');
       sliders.push(img);
   } 
   else{
@@ -77,7 +76,8 @@ const createSlider = () => {
       item.className = "slider-item";
       item.innerHTML = `<img class="w-100"
       src="${slide}"
-      alt="">`;
+      alt="">
+      `;
       sliderContainer.appendChild(item)
     })
     changeSlide(0)
@@ -87,7 +87,7 @@ const createSlider = () => {
     }, duration);
   }
   else{
-    alert('No');
+    alert('Duration can not be negative');
     document.querySelector('.main').style.display = 'none';
   }
 }
@@ -141,8 +141,16 @@ const searchKeyPress = (event) => {
   }
 }
 
+//enter keypress for duration
 const durationKeyPress = (event) => {
   if(event.keyCode === 13){
     createSlider()
   }
+}
+//toggle spinner
+const toggleSpinner = () => {
+  const spinner = document.getElementById('loading-spinner');
+  const imagesContainer = document.getElementById('images-container');
+  spinner.classList.toggle('d-none');
+  imagesContainer.classList.toggle('d-none');
 }
