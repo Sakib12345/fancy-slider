@@ -38,15 +38,17 @@ const getImages = (query) => {
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  element.classList.add('added');
-  console.log(element.classList)
- 
+  
+  
   let item = sliders.indexOf(img);
   if (item === -1) {
-    sliders.push(img);
-  } else {
-    alert('Hey, Already added !')
-  }
+    element.classList.add('added');
+      sliders.push(img);
+  } 
+  else{
+      sliders.splice(item, 1);
+      element.classList.remove('added');
+    }
 }
 var timer 
 const createSlider = () => {
@@ -127,3 +129,20 @@ searchBtn.addEventListener('click', function () {
 sliderBtn.addEventListener('click', function () {
   createSlider()
 })
+
+//enter keypress for image search
+const searchKeyPress = (event) => {
+  if(event.keyCode === 13){
+    document.querySelector('.main').style.display = 'none';
+    clearInterval(timer);
+    const search = document.getElementById('search');
+    getImages(search.value)
+    sliders.length = 0;
+  }
+}
+
+const durationKeyPress = (event) => {
+  if(event.keyCode === 13){
+    createSlider()
+  }
+}
