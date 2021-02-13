@@ -22,15 +22,19 @@ const showImages = (images) => {
   images.forEach(image => {
     let div = document.createElement('div');
     div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}" title="${image.tags}">
+    <div class ="views-likes">
+    <p>Views: ${image.views}</p>
+    <p>Likes: ${image.likes}</p>
+    </div>`;
     gallery.appendChild(div)
   })
-  toggleSpinner();
+    toggleSpinner();
 }
 
 const getImages = (query) => {
-  toggleSpinner();
-  fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+    toggleSpinner();
+    fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data => showImages(data.hits))
     .catch(err => console.log(err))
@@ -53,7 +57,7 @@ var timer
 const createSlider = () => {
   // check slider image length
   if (sliders.length < 2) {
-    alert('Select at least 2 image.')
+    alert('Select at least 2 images.')
     return;
   }
   // crate slider previous next area
@@ -87,7 +91,7 @@ const createSlider = () => {
     }, duration);
   }
   else{
-    alert('Duration can not be negative');
+    alert(`Duration can not be negative OR You Have to put at least 1000ms`);
     document.querySelector('.main').style.display = 'none';
   }
 }
@@ -122,7 +126,13 @@ searchBtn.addEventListener('click', function () {
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
-  getImages(search.value)
+  if(search.value == '' || search.value == ' '){
+    errorTogglePopUp();
+    gallery.innerHTML = '';
+  }
+  else{
+    getImages(search.value)
+  }
   sliders.length = 0;
 })
 
@@ -147,10 +157,21 @@ const durationKeyPress = (event) => {
     createSlider()
   }
 }
+
 //toggle spinner
 const toggleSpinner = () => {
   const spinner = document.getElementById('loading-spinner');
   const imagesContainer = document.getElementById('images-container');
   spinner.classList.toggle('d-none');
   imagesContainer.classList.toggle('d-none');
+}
+
+//function for pop up when user's input can not match with the image's database.
+const errorTogglePopUp = () => {
+  document.getElementById("popup-2").classList.toggle("active");
+  const errorInfo = `
+      <img class="sorry-img" src="images/sorry.png">
+      <h1 class="error-message">Sorry, No Image Found</h1>
+      `;
+  document.getElementById('errorMessage').innerHTML = errorInfo;    
 }
